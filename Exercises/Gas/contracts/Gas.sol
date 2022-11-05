@@ -1,25 +1,21 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.0;
+pragma solidity 0.8.17;
 
 import "./Ownable.sol";
 
 contract Constants {
-    uint256 public tradeFlag = 1;
-    uint256 public basicFlag = 0;
-    uint256 public dividendFlag = 1;
+    uint256 internal constant tradeFlag = 1;
+    uint256 internal constant basicFlag = 0;
+    uint256 internal constant dividendFlag = 1;
 }
 
 contract GasContract is Ownable, Constants {
     uint256 public totalSupply = 0; // cannot be updated
-    uint256 public paymentCounter = 0;
     mapping(address => uint256) public balances;
-    uint256 public tradePercent = 12;
     address public contractOwner;
-    uint256 public tradeMode = 0;
     mapping(address => Payment[]) public payments;
     mapping(address => uint256) public whitelist;
     address[5] public administrators;
-    bool public isReady = false;
     enum PaymentType {
         Unknown,
         BasicPayment,
@@ -147,7 +143,7 @@ contract GasContract is Ownable, Constants {
         return balance;
     }
 
-    function getTradingMode() public view returns (bool mode_) {
+    function getTradingMode() public pure returns (bool mode_) {
         bool mode = false;
         if (tradeFlag == 1 || dividendFlag == 1) {
             mode = true;
@@ -159,18 +155,15 @@ contract GasContract is Ownable, Constants {
 
     function addHistory(address _updateAddress, bool _tradeMode)
         public
-        returns (bool status_, bool tradeMode_)
+        returns (bool tradeMode_)
     {
         History memory history;
         history.blockNumber = block.number;
         history.lastUpdate = block.timestamp;
         history.updatedBy = _updateAddress;
         paymentHistory.push(history);
-        bool[] memory status = new bool[](tradePercent);
-        for (uint256 i = 0; i < tradePercent; i++) {
-            status[i] = true;
-        }
-        return ((status[0] == true), _tradeMode);
+       
+        return ( _tradeMode);
     }
 
     function getPayments(address _user)
@@ -203,19 +196,16 @@ contract GasContract is Ownable, Constants {
         balances[_recipient] += _amount;
         emit Transfer(_recipient, _amount);
         Payment memory payment;
-        payment.admin = address(0);
+ 
         payment.adminUpdated = false;
         payment.paymentType = PaymentType.BasicPayment;
         payment.recipient = _recipient;
         payment.amount = _amount;
         payment.recipientName = _name;
-        payment.paymentID = ++paymentCounter;
+        ++payment.paymentID;
         payments[senderOfTx].push(payment);
-        bool[] memory status = new bool[](tradePercent);
-        for (uint256 i = 0; i < tradePercent; i++) {
-            status[i] = true;
-        }
-        return (status[0] == true);
+      
+        return (true);
     }
 
     function updatePayment(
