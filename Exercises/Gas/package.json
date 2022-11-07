@@ -10,9 +10,11 @@
     "hardhat-gas-reporter": "^1.0.6"
   },
   "dependencies": {
+    "16": "^0.0.2",
     "@openzeppelin/contracts": "^4.4.0",
     "keccak256": "^1.0.6",
     "merkletreejs": "^0.2.31",
+    "node": "^19.0.1",
     "sol2uml": "^2.1.2"
   }
 }
